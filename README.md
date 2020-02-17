@@ -1,1 +1,2 @@
-# fvaria
+# *Frieseomelitta varia* genome assembly
+
