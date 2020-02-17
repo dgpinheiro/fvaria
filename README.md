@@ -10,18 +10,18 @@ Details about Illumina sequenging strategies and the resulting data are describe
 	* 2 * 101 bp
 	* 1 Lane
 	* 1 Sample
-
+	
 	| Lane | Sample   | #Reads      | % Bases >= Q30 |
 	| ---- | -------- | ----------- | -------------- |
 	| 1    | Amostra2 | 261.719.290 | 94,53          |
 
 * Mate-pair
 	* 2 * 101 bp
-        * 1 Lane
-        * 1 Sample
-
+	* 1 Lane
+	* 1 Sample
+	
 	| Lane | Sample   | #Reads      | % Bases >= Q30 |
-        | -----| -------- | ----------- | -------------- |
+	| -----| -------- | ----------- | -------------- |
 	| 2    | Amostra1 | 171.026.322 | 90,00          |
 
 ## Pre-processing steps
@@ -40,9 +40,9 @@ also trims off adapter read‐through.
 * Post processing steps:
 
 	| Protocol   | #Reads      |
-        | ---------- | ----------- |
+	| ---------- | ----------- |
 	| Paired-end | 234.357.438 |
-        | Mate-pair  |   9.617.088 |
+	| Mate-pair  |   9.617.088 |
 
 ## Assembly
 
