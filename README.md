@@ -6,7 +6,8 @@
 The DNA library preparation and sequenging steps were made at [LaCTAD](https://www.lactad.unicamp.br/) sequencing facility.
 Details about Illumina sequenging strategies and the resulting data are described:
 
-* Paired-end
+* TruSeq Paired-end 
+	* ~350 bp - average insert size
 	* 2 * 101 bp
 	* 1 Lane
 	* 1 Sample
@@ -15,7 +16,8 @@ Details about Illumina sequenging strategies and the resulting data are describe
 	| ---- | -------- | ----------- | -------------- |
 	| 1    | Amostra2 | 261.719.290 | 94,53          |
 
-* Mate-pair
+* Nextera Mate-pair
+	* ~3 Kbp - average fragment size
 	* 2 * 101 bp
 	* 1 Lane
 	* 1 Sample
@@ -56,5 +58,7 @@ Assembly size (without N's): 280.751.127
 Average size of scaffolds: 28.800
 N50: 81.551 (980 contigs)
 </pre>
+
+> The above information was provided by MSc. Osvaldo Reis Júnior (LaCTAD)
 
 
