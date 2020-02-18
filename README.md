@@ -49,7 +49,7 @@ cat ./raw/*_R2_*.fastq > FVARIA_R2.fq
 
 ```
 
-::: info
+:::
 Jellyfish was executed using a range of k-mer sizes, from 19 to 43 with an increment of 4. 
 :::
 
