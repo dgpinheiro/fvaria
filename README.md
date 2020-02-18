@@ -49,9 +49,8 @@ cat ./raw/*_R2_*.fastq > FVARIA_R2.fq
 
 ```
 
-:::
-Jellyfish was executed using a range of k-mer sizes, from 19 to 43 with an increment of 4. 
-:::
+> Jellyfish was executed using a range of k-mer sizes, from 19 to 43 with an increment of 4. 
+
 
 * 2nd method
 
@@ -114,20 +113,16 @@ cd ./ref
 hisat2-build genome genome.fa
 ```
 
-::: info
-To execute the script "run_hisat2.sh", first we need to create an index for the the fasta file with genome assembly (genome.fa) 
+> To execute the script "run_hisat2.sh", first we need to create an index for the the fasta file with genome assembly (genome.fa) 
 using software hisat2-build.
-:::
 
 ```bash=
 ./run_hisat2.sh
 ```
 
-::: info
-The script "run_hisat2.sh" must be executed in a directory containing the following input directories:
-- "./in" containing fastq files with DNAPE* and DNAMatePair* prefixes;
-- "./ref" containing hisat2 index files (\*.ht2);
-:::
+> The script "run_hisat2.sh" must be executed in a directory containing the following input directories:
+> - "./in" containing fastq files with DNAPE* and DNAMatePair* prefixes;
+> - "./ref" containing hisat2 index files (\*.ht2);
 
 So, we executed BESST pipeline with sorted and indexed alignments:
 
