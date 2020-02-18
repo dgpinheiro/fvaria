@@ -1,14 +1,12 @@
 #!/bin/bash
 
 if [ ! -d "./raw/" ]; then
-	echo "Error: Missing input directory: ./in containing .fastq files with DNAPE* and DNAMatePair* prefixes"
+	echo "Error: Missing input directory: ./raw containing .fastq files with DNAPE* and DNAMatePair* prefixes"
 	exit
 fi
 
-if [ ! -d "./in/" ]; then
-	echo "Error: Missing input directory: ./in containing .fastq files with DNAPE* and DNAMatePair* prefixes"
-	exit
-fi
+mkdir -p ./in/
+rm -f ./in/*.fastq
 
 for r1 in ./raw/DNAMatePair*_R1*.fastq; do
 	bn=`basename ${r1} .fastq | sed 's/_R1.*/_R1/'`;
