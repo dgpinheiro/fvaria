@@ -37,7 +37,7 @@ Details about Illumina sequenging strategies and the resulting data are describe
 The genome size estimation was based on [Genome Size Estimation Tutorial](https://bioinformatics.uconn.edu/genome-size-estimation-tutorial/) of Computational Biology Core of Institute for Systems Biology at University of Connecticut. We create an R script ([genomeSize.R]()) to automate the steps of this tutorial, including the identification and trimming the k-mers with frequencies less than the frequency of the first valley identified in the histogram of k-mer counts obtained with Jellyfish. The peak and the first valley was identified using [findPeaks](https://github.com/stas-g/findPeaks) function.
 
 
-In order to execute genomeSize.R we need to execute Jellyfish ([run_jellyfish.sh](), but first we concatenated all the R1 files into one file (FVARIA_R1.fq) and all the R2 files into another file (FVARIA_R2.fq):
+	In order to execute genomeSize.R we need to execute Jellyfish ([run_jellyfish.sh](), but first we concatenated all the R1 files into one file (FVARIA_R1.fq) and all the R2 files into another file (FVARIA_R2.fq):
 
 ```bash=
 cat ./raw/*_R1_*.fastq > FVARIA_R1.fq
@@ -63,7 +63,7 @@ kmc -k25 -ci5 -n200 -t20 @files.lst result /tmp
 	The number of unique counted k-mers was divided by 1,000,000 to obtain the estimated genome size in Mbp.
 
 <pre>
-Estimated Genome size: 381.41 Mbp
+Estimated Genome size (kmc): 381.41 Mbp
 </pre>
 
 ## Pre-processing steps
