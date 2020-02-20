@@ -1,35 +1,5 @@
-# *Frieseomelitta varia* genome assembly
+# Complementary *Frieseomelitta varia* genome size estimates
 
-## Illumina HiSeq2500 sequencing:
-
-The DNA library preparation and sequenging steps were made at [LaCTAD](https://www.lactad.unicamp.br/) sequencing facility.
-Details about Illumina sequenging strategies and the resulting data are described:
-
-* TruSeq Paired-end 
-	* ~350 bp - average insert size
-	* 2 * 101 bp
-	* 1 Lane
-	* 1 Sample
-	
-	| Name   | Lane | Index  | Sample   | #Reads          | % Bases >= Q30 |
-	| ------ | ---- | ------ | -------- | --------------- | -------------- |
-	| DNAPE1 | L006 | CAGATC | Drone    | 2 * 120,948,424 | 64.85          |
-	| DNAPE2 | L001 | ACAGTG | Drone    | 2 * 130,859,645 | 94.53          |
-
-* Nextera Mate-pair
-	* ~3 Kbp - average fragment size
-	* 2 * 101 bp
-	* 1 Lane
-	* 1 Sample
-	
-	| Name        | Lane | Index   | Sample   | #Reads          | % Bases >= Q30 |
-	| ----------- | -----| ------- | -------- | --------------- | -------------- |
-	| DNAMatePair | L007 | NoIndex | Drone    | 2 * 85,513,161  | 92.10          |
-
-> The sequencing step was performed by LaCTAD and the above information was provided by MSc. Osvaldo Reis Júnior (LaCTAD).
-
-## Genome size estimation
-	
 In order to execute genome size estimation based ok k-mer counting we need to execute Jellyfish ([run_jellyfish.sh](https://github.com/dgpinheiro/fvaria/blob/master/run_jellyfish.sh)), but first we concatenated all the R1 files into one file (FVARIA_R1.fq) and all the R2 files into another file (FVARIA_R2.fq):
 
 ```bash=
