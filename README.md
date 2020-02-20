@@ -28,64 +28,89 @@ Details about Illumina sequenging strategies and the resulting data are describe
 
 > The sequencing step was performed by LaCTAD and the above information was provided by MSc. Osvaldo Reis Júnior (LaCTAD).
 
-## Genome size estimation
-	
-In order to execute genome size estimation based ok k-mer counting we need to execute Jellyfish ([run_jellyfish.sh](https://github.com/dgpinheiro/fvaria/blob/master/run_jellyfish.sh)), but first we concatenated all the R1 files into one file (FVARIA_R1.fq) and all the R2 files into another file (FVARIA_R2.fq):
+## Genome estimates 
+
+The genome heterozygosity, repeat content, and size was evaluated from sequencing reads using a kmer-based statistical approach using [GenomeScope](https://github.com/schatzlab/genomescope) software v. 1.0.
+
+In order to perform the estimates we need to execute [Jellyfish](https://github.com/gmarcais/Jellyfish) v. 2.2.0 ([run_jellyfish.sh](https://github.com/dgpinheiro/fvaria/blob/master/run_jellyfish.sh)) for counting of k-mers in DNA. So, we first concatenated all the R1 files into one file (FVARIA_R1.fq) and all the R2 files into another file (FVARIA_R2.fq):
 
 ```bash=
 cat ./raw/*_R1_*.fastq > FVARIA_R1.fq
 cat ./raw/*_R2_*.fastq > FVARIA_R2.fq
 ```
-
+	
 ```bash=
 ./run_jellyfish.sh
 ```
 
 > Jellyfish was executed using a range of k-mer sizes, from 19 to 63 with an increment of 4. The Jellyfish histogram of k-mer counts was also created with [run_jellyfish.sh]().
 
-* 1st method
-
-	Genome size was estimated from all fastq reads by k-mer counting using [Jellyfish](https://github.com/gmarcais/Jellyfish) v. 2.2.0. 
-The genome size estimation was based on [GenomeScope](https://github.com/schatzlab/genomescope) analysis. 
+Execution of GenomeScope for all Jellyfish histogram files:
 
 ```bash=
 for i in `ls *.histo`; do k=`basename ${i} .histo | sed 's/mer_out//'`; genomescope.R ${i} ${k} 101 ./GenomeScope${k}; done
 ```
+
+* Genome size
+
 ```bash=
 cat ./GenomeScope*/summary.txt | grep 'Genome Haploid Length' | perl -F"\s{2,}" -lane 'INIT { $min=0; $max=0; $n=0; } $n++; $F[1]=~s/\D+//g; $F[2]=~s/\D+//g; $min+=$F[1]; $max+=$F[2]; END { print $F[0],"\t",sprintf("%.2f",($min/$n)/1000000)," Mbp","\t",sprintf("%.2f", ($max/$n)/1000000)," Mbp"; }'
 ```
-
-Output:
+Output (Min./Max.):
 <pre>
 Genome Haploid Length   345.77 Mbp      345.90 Mbp
 </pre>
 
-* 2st method
+* Heterozygosity
 
-	Genome size was also estimated from all fastq reads by k-mer counting using [Jellyfish](https://github.com/gmarcais/Jellyfish) v. 2.2.0. 
-The genome size estimation was based on [Genome Size Estimation Tutorial](https://bioinformatics.uconn.edu/genome-size-estimation-tutorial/) of Computational Biology Core of Institute for Systems Biology at University of Connecticut. We create an R script ([genomeSize.R](https://github.com/dgpinheiro/fvaria/blob/master/genomeSize.R)) to automate the steps of this tutorial, including the identification and trimming the k-mers with frequencies less than the frequency of the first valley identified in the histogram of k-mer counts obtained with Jellyfish. The peak and the first valley was identified using [findPeaks](https://github.com/stas-g/findPeaks) function.
-	The [genomeSize.R](https://github.com/dgpinheiro/fvaria/blob/master/genomeSize.R) was executed for a range o k-mer sizes and the average was calculated:
+The average of minimum and maximum heterozygosity estimates using distinct k-mer sizes:
 
 ```bash=
-perl -lane 'INIT {my $sum=0; my $n=0;} $n++; $sum+=$_; END { print "Genome size: ".sprintf("%.2f",($sum/$n))." Mbp"; }' <(for i in `ls *.histo`; do  ./genomeSize.R --in=./${i} | grep 'Genome size' | sed 's/Genome size: //' | sed 's/ Mb//'; done)
+cat ./GenomeScope*/summary.txt | grep 'Heterozygosity' | perl -F"\s{2,}" -lane 'INIT { $min=0; $max=0; $n=0; } $n++; $F[1]=~s/\%//g; $F[2]=~s/\%//g; $min+=$F[1]; $max+=$F[2]; END { print $F[0],"\t",sprintf("%.4f",($min/$n))," %","\t",sprintf("%.4f", ($max/$n))," %"; }'
 ```
 
-Output:
+Output (Min./Max.):
 <pre>
-Genome size: 389.51 Mbp
+Heterozygosity  0.1258 %  0.1277 %
 </pre>
 
-* 3nd method
+* Genome Repeat Length
 
-	Genome size was also estimated from all fastq reads by k-mer counting using [KMC](http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about) v. 3.0.0. To do this we set up kmc with the following parameters: to consider kmers of size 25 (-k25); to discard kmers with frequencies less than 5 (-ci5); to use 200 bins (-n200); and to process all using 20 threads (-t20). The file named "files.lst" contains the path to all fastq files. The number of unique counted k-mers was divided by 1,000,000 to obtain the estimated genome size in Mbp.
+The average of minimum and maximum genome repeat length estimates using distinct k-mer sizes:
 
 ```bash=
-kmc -k25 -ci5 -n200 -t20 @files.lst result /tmp
+cat ./GenomeScope*/summary.txt | grep 'Genome Repeat Length' | perl -F"\s{2,}" -lane 'INIT { $min=0; $max=0; $n=0; } $n++; $F[1]=~s/\D+//g; $F[2]=~s/\D+//g; $min+=$F[1]; $max+=$F[2]; END { print $F[0],"\t",sprintf("%.2f",($min/$n)/1000000)," Mbp","\t",sprintf("%.2f", ($max/$n)/1000000)," Mbp"; }'
 ```
 
-Output:
+Output (Min./Max.):
 <pre>
-Estimated Genome size (kmc): 381.41 Mbp
+Genome Repeat Length    76.05 Mbp       76.08 Mbp
+</pre>
+
+* Model Fit
+
+The average of minimum and maximum model fit estimates using distinct k-mer sizes:
+
+```bash=
+cat ./GenomeScope*/summary.txt | grep 'Model Fit' | perl -F"\s{2,}" -lane 'INIT { $min=0; $max=0; $n=0; } $n++; $F[1]=~s/\%//g; $F[2]=~s/\%//g; $min+=$F[1]; $max+=$F[2]; END { print $F[0],"\t",sprintf("%.4f",($min/$n))," %","\t",sprintf("%.4f", ($max/$n))," %"; }'
+```
+
+Output (Min./Max.):
+<pre>
+Model Fit       97.1158 %       99.3401 %
+</pre>
+
+* Read Error Rate
+
+The average of minimum and maximum read error rate estimates using distinct k-mer sizes:
+
+```bash=
+cat ./GenomeScope*/summary.txt | grep 'Read Error Rate' | perl -F"\s{2,}" -lane 'INIT { $min=0; $max=0; $n=0; } $n++; $F[1]=~s/\%//g; $F[2]=~s/\%//g; $min+=$F[1]; $max+=$F[2]; END { print $F[0],"\t",sprintf("%.8f",($min/$n))," %","\t",sprintf("%.8f", ($max/$n))," %"; }'
+```
+
+Output (Min./Max.):
+<pre>
+Read Error Rate 0.12025125 %    0.12025125 %
 </pre>
 
 ## Pre-processing steps
@@ -116,11 +141,10 @@ The assembly was performed using software [SPAdes](http://bioinf.spbau.ru/spades
 using error correction (BayesHammer module) and using 13 k-mer lengths (33, 37, 41, 45, 49, 53, 57, 61, 65, 69, 73, 77 and 81).
 
 <pre>
-#Scaffolds: 9.755
-Assembly size: 280.951.552 bp
-Assembly size (without N's): 280.751.127
-Average size of scaffolds: 28.800
-N50: 81.551 (980 contigs)
+#Scaffolds: 9,755
+Assembly size: 280,951,552 bp
+Average size of scaffolds: 28,800 bp
+N50: 81,551 (980 contigs)
 </pre>
 
 > The assembly step was performed by LaCTAD and the above information was provided by MSc. Osvaldo Reis Júnior (LaCTAD).
@@ -172,20 +196,122 @@ runBESST \
         ./out/DNAMP_sorted.bam ./out/DNAPE_sorted.bam
 ```
 
-> The final assembly was named *Fvar-1.1.fa*
+> The final assembly was named *Fvar-1.1.fa* and then copied to *Fvar-1.2.fa*, i.e. these fasta files are the same. The genome fasta file was compressed in [Fvar-1.2.fa.gz](https://github.com/dgpinheiro/fvaria/blob/master/data/Fvar-1.2.fa.gz).
+
+<pre>
+#Scaffolds: 2,173
+Assembly size: 275,421,029 bp
+Average size of scaffolds: 126,747 bp
+N50: 467,007 (176 contigs)
+</pre>
+
 
 ## Gene prediction
 
-The gene prediction was made with [Maker2](https://www.yandell-lab.org/software/maker.html) v. 3.00 using the *F. varia* assembled genome (*Fvar-1.1.fa*). In addition to the default gene prediction protocol in Maker2, we added the following data to be used:
+The gene prediction was made with [Maker2](https://www.yandell-lab.org/software/maker.html) v. 3.00 using the *F. varia* assembled genome (*Fvar-1.1.fa*).
+First, we used Maker2 with the default gene prediction protocol with *Ab-initio* gene prediction softwares and some EST Evidences.
+
 * EST Evidence
-	* *transcriptXgenome_filtered_sorted.gff* - *F. varia* assembled transcriptome (contigs) mapped on *F. varia* genome assembly (*Fvar-1.1.fa*) using [UCSC Genome Browser](https://genome-store.ucsc.edu/) Tools (blat, pslCDnaFilter, pslToBed, bedToGenePred, genePredToGtf) and [GBrowse](http://gmod.org/wiki/GBrowse) Tools (gtf2gff3);
 	* *ests.fa* - 20,064 Expressed Sequence Tags (ESTs) of *F. varia* obtained from NCBI GenBank;
 	* *altests.fa* - 169,511 Expressed Sequence Tags (ESTs) of *Apis mellifera* obtained from NCBI GenBank;
 * Protein Homology Evidence
 	* *GCF_000002195.4_Amel_4.5_protein.faa* - Proteins of *Apis mellifera* obtained from NCBI Genome;
-Moreover, the following gene prediction softwares in Maker2 was also configured:
-	* SNAP - configured with A.mellifera.hmm;
-	* Augustus - configured with fly model;
+Moreover, the following *Ab-initio* gene prediction softwares in Maker2 was also configured:
+	* [SNAP](https://github.com/KorfLab/SNAP) v. 2006-07-28 - configured with A.mellifera.hmm;
+	* [Augustus](http://bioinf.uni-greifswald.de/augustus/) v. 3.3 - configured with fly model;
+	* [genemark](http://exon.gatech.edu/GeneMark/) v. 3.52 - eukaryotic executable;
 
-> Full details can be obtained by consulting the Maker2 configuration files: maker_bopts.ctl  maker_evm.ctl  maker_exe.ctl  maker_opts.ctl
-	
+> Full details can be obtained by consulting the Maker2 configuration files ([maker2_1](https://github.com/dgpinheiro/fvaria/tree/master/data/maker2_1)): maker_bopts.ctl  maker_evm.ctl  maker_exe.ctl  maker_opts.ctl
+ 
+So, we executed Maker2 again with another gene evidences. In addition to the previous configuration, we added another EST evidence based on transcriptome assembly together with the previous assembly:
+
+* Re-annotation Using MAKER Derived GFF3
+	* *Fvar-1.1.maker.output/Fvar-1.1.all.gff* - previous MAKER Derived GFF3;
+* EST evidence
+	* *transcriptXgenome_filtered_sorted.gff* - *F. varia* assembled transcriptome (contigs) mapped on *F. varia* genome assembly (*Fvar-1.1.fa*) using [UCSC Genome Browser](https://genome-store.ucsc.edu/) Tools (blat, pslCDnaFilter, pslToBed, bedToGenePred, genePredToGtf) and [GBrowse](http://gmod.org/wiki/GBrowse) Tools (gtf2gff3);
+
+> Full details can be obtained by consulting the Maker2 configuration files ([maker2_2](https://github.com/dgpinheiro/fvaria/tree/master/data/maker2_2)): maker_bopts.ctl  maker_evm.ctl  maker_exe.ctl  maker_opts.ctl
+
+## Creating GFF/GTF
+
+We create the gene feature file from the output of Maker2 (an output folder with a datastore index) using *gff3_merge* script to combine all the GFFs.
+
+```bash=
+gff3_merge -d Fvar-1.2.maker.output/Fvar-1.2_master_datastore_index.log
+```
+
+We filtered out all the complementary features contained in the generated GFF file.
+
+```bash=
+grep -v -P '\t(contig|repeatmasker|snap_masked|augustus_masked_match|augustus_masked|blastx|protein2genome|evm|blastn|est2genome|cdna2genome|repeatrunner|tblastx)\t' Fvar-1.2.all.gff | grep -v '^[#>]' | grep -v -P '^[ACGTN]+$' > Fvar-1.2.cleaned.gff
+```
+
+We also converted GFF to GTF file:
+
+```bash=
+cat Fvar-1.2.cleaned.gff | gff2gtf.pl > Fvar-1.2.cleaned.gtf
+```
+
+So, we renamed the features using the prefix **Fvar** using first the [rename_gtf.pl](https://github.com/dgpinheiro/fvaria/blob/master/rename_gtf.pl) script and then the [rename_gff.pl](https://github.com/dgpinheiro/fvaria/blob/master/rename_gff.pl) script. After renaming with *rename_gff.pl* the [checkGFFcoords.pl](https://github.com/dgpinheiro/fvaria/blob/master/checkGFFcoords.pl) script was executed to check *three_prime_UTR* and *five_prime_UTR* features and adjust the first/last exon coordinates.
+
+```bash=
+rename_gtf.pl -i Fvar-1.2.cleaned.gtf -o Fvar-1.2.gtf -p Fvar
+
+./rename_gff.pl -i Fvar-1.2.cleaned.gff -o Fvar-1.2.tmp.gff
+./checkGFFcoords.pl -i1 Fvar-1.2.all.gff -i2 Fvar-1.2.tmp > Fvar-1.2.gff
+
+rm -f ./Fvar-1.2.tmp.gff
+```
+
+> All these steps were made for the first execution of Maker2, but only the last one was represented in the commands above.
+
+
+## Annotation with eggNOG-mapper
+
+A complementary annotation was performed with [eggNOG-mapper](https://github.com/eggnogdb/eggnog-mapper) v. 2.0.0 before submission to NCBI Genome Database. The protein sequences (*Fvar-1.2-proteins.fa*) were extracted from GFF (*Fvar-1.2.gff*) using [gffread](https://github.com/gpertea/gffread) software v. 0.11.7.
+
+```bash=
+mkdir -p em/
+
+sed 's/\.$//' Fvar-1.2-proteins.fa > Fvar-1.2-proteins-cleaned.fa
+
+perl -e 'use Bio::SeqIO; my $seqin = Bio::SeqIO->new(-file=>"Fvar-1.2-proteins-cleaned.fa", -format=>"FASTA"); my $seqout = Bio::SeqIO->new(-fh=>\*STDOUT,-format=>"FASTA",-width=>1000000); while (my $seq=$seqin->next_seq() ) { $seqout->write_seq($seq); } ' | split -l 20000 -a 3 -d - em/input_file.chunk_
+
+for f in em/*.chunk_*; do
+       emapper.py -m diamond --no_annot --no_file_comments --cpu 40 -i ${f} -o ${f};
+done
+cat em/*.chunk_*.emapper.seed_orthologs > em/input_file.emapper.seed_orthologs
+
+emapper.py --annotate_hits_table em/input_file.emapper.seed_orthologs --no_file_comments -o em/output_file --cpu 40
+
+```
+
+## Assembly of Mitochondrial Genome
+
+
+
+## NCBI Genome Database Submission
+
+* Nuclear genome
+
+We first adjusted the GFF to satisfy NCBI genome submission requirements, such as locus_tag attribute. We also added eggNOG-mapper annotation to the coding genes.
+
+```bash=
+./adj_gff.pl -i Fvar-1.2.gff -e ./output_file.emapper.annotations > Fvar-1.2-ncbi.gff
+```
+
+The GFF obtained with Maker2 was annotated with [eggNOG-mapper](https://github.com/eggnogdb/eggnog-mapper) v. 
+The GFF (*Fvar-1.2-ncbi.gff*) was converted to Sequin data file (*Fvar-1.2.sqn*) and was sent to NCBI Genome database.
+
+```bash=
+table2asn -M n -J -c w -euk -t ./template.sbt -gaps-min 10 -l paired-ends -i ./Fvar-1.2.fa -f ./Fvar-1.2-ncbi.gff -o ./Fvar-1.2.sqn  -n "Frieseomelitta varia" -taxid 561572 -V b -T -j "[organism=Frieseomelitta varia] [topology=linear] [location=genomic] [moltype=DNA] [gcode=1] [sex=male] [country=Brazil] [dev-stage=pharate-adult] [Tech=wgs] [completedness=partial] [common=marmelada] [strand=double]"
+```
+
+* Mitochondrial genome
+
+The TBL file (*Fvar-MT-1.2.1.tbl*) obtained with [Sequin](https://www.ncbi.nlm.nih.gov/Sequin/) was manually adjusted (for example, the names of gene products were adjusted to follow the pattern established by NCBI), then converted to Sequin file (*Fvar-MT-1.2.1.sqn*) and was also sent to NCBI Genome database.
+
+```bash=
+table2asn -C lbda -Z -M n -J -c 'wsdD' -euk -t ./template.sbt -gap-type scaffold -l paired-ends -i ./Fvar-MT-1.2.fa -f ./Fvar-MT-1.2.1.tbl -o ./Fvar-MT-1.2.1.sqn  -n "Frieseomelitta varia" -taxid 561572 -V b -T -j "[organism=Frieseomelitta varia] [topology=circular] [location=mitochondrion] [moltype=DNA] [mgcode=5] [gcode=1] [sex=male] [country=Brazil] [dev-stage=pharate-adult] [tech=wgs] [completedness=complete] [common=marmelada] [strand=double]"
+```
+
