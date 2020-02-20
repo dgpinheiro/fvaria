@@ -268,7 +268,7 @@ rm -f ./Fvar-1.2.tmp.gff
 
 ## Annotation with eggNOG-mapper
 
-A complementary annotation was performed with [eggNOG-mapper](https://github.com/eggnogdb/eggnog-mapper) v. 2.0.0 before submission to NCBI Genome Database. The protein sequences (*Fvar-1.2-proteins.fa*) were extracted from GFF (*Fvar-1.2.gff*) using [gffread](https://github.com/gpertea/gffread) software v. 0.11.7.
+A coding gene function annotation was performed with [eggNOG-mapper](https://github.com/eggnogdb/eggnog-mapper) v. 2.0.0 before submission to NCBI Genome Database. The protein sequences (*Fvar-1.2-proteins.fa*) were extracted from GFF (*Fvar-1.2.gff*) using [gffread](https://github.com/gpertea/gffread) software v. 0.11.7.
 
 ```bash=
 mkdir -p em/
@@ -286,6 +286,10 @@ emapper.py --annotate_hits_table em/input_file.emapper.seed_orthologs --no_file_
 
 ```
 
+## UCSC Genome Browser
+
+We load *F. varia* genome and gene prediction coordinates to our (local UCSC Genome Browser)[http://kerr.fmrp.usp.br:88/cgi-bin/hgGateway?hgsid=5040&clade=insect&org=F.+varia&db=0].
+
 ## Assembly of Mitochondrial Genome
 
 
@@ -294,7 +298,7 @@ emapper.py --annotate_hits_table em/input_file.emapper.seed_orthologs --no_file_
 
 * Nuclear genome
 
-We first adjusted the GFF to satisfy NCBI genome submission requirements, such as locus_tag attribute. We also added eggNOG-mapper annotation to the coding genes.
+We first adjusted the GFF to satisfy NCBI genome submission requirements, such as locus_tag attribute. We also added eggNOG-mapper annotation for the coding genes.
 
 ```bash=
 ./adj_gff.pl -i Fvar-1.2.gff -e ./output_file.emapper.annotations > Fvar-1.2-ncbi.gff
