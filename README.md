@@ -288,7 +288,7 @@ emapper.py --annotate_hits_table em/input_file.emapper.seed_orthologs --no_file_
 
 ## UCSC Genome Browser
 
-We load *F. varia* genome and gene prediction coordinates to our local UCSC Genome Browser in [*F. varia*](http://kerr.fmrp.usp.br:88/cgi-bin/hgGateway?hgsid=5040&clade=insect&org=F.+varia&db=0) page.
+We load *F. varia* genome and gene prediction coordinates to our UCSC Genome Browser instalation at [LBDA](http://kerr.fmrp.usp.br/mediawiki/index.php/Main_Page) The *F. varia* genome can be accessed [here](http://kerr.fmrp.usp.br:88/cgi-bin/hgGateway?hgsid=5040&clade=insect&org=F.+varia&db=0).
 
 ## Assembly of Mitochondrial Genome
 
