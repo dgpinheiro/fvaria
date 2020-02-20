@@ -1,5 +1,7 @@
 # *Frieseomelitta varia* genome assembly
 
+![Frieseomelitta varia](fvaria.png)
+
 ## Illumina HiSeq2500 sequencing:
 
 The DNA library preparation and sequenging steps were made at [LaCTAD](https://www.lactad.unicamp.br/) sequencing facility.
@@ -112,6 +114,24 @@ Output (Min./Max.):
 <pre>
 Read Error Rate 0.12025125 %    0.12025125 %
 </pre>
+
+## Evaluation of contamination
+
+The evaluation of contamination was performed on all fastq reads using [Kraken2](https://ccb.jhu.edu/software/kraken2/index.shtml) software v. 2.0.7-beta with a custom database, with includes not only the default databases with RefSeq complete genomes (bacteria, plasmid, viral, human, fungi, plant and protozoa species), but also other not completed genomes of bacteria, fungi and protozoa species.
+
+```bash=
+kraken2 --db /usr/local/bioinfo/kraken2/DB --threads 50 --minimum-base-quality 30 --memory-mapping --paired --report kraken2_report.txt --output kraken2_output.txt FVARIA_R1.fq FVARIA_R2.fq
+```
+
+Output:
+<pre>
+Loading database information... done.
+337321230 sequences (68138.89 Mbp) processed in 35970.352s (562.7 Kseq/m, 113.66 Mbp/m).
+  127090355 sequences classified (37.68%)
+  210230875 sequences unclassified (62.32%)
+</pre>
+
+
 
 ## Pre-processing steps
 
