@@ -399,9 +399,9 @@ for mitochondrial assembly with default parameters considering COX2 gene of *Bom
  as recommended by its developers.
 
 ```bash=
-
+NOVOPlasty2.5.9.pl -c config.txt
 ```
-
+The configuration file for NOVOPlasty ([config.txt](https://github.com/dgpinheiro/fvaria/blob/master/data/novoplasy/config.txt)) contains all the parameters for the execution.
 The final alignment file is [Fvar-MT-1.2.fa](https://github.com/dgpinheiro/fvaria/blob/master/data/Fvar-MT-1.2.fa.gz).
 
 ### Mitochondrial assembly evaluation
