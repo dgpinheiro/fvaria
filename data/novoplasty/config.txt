@@ -1,0 +1,49 @@
+Project name         = Fvaria_2PE_k39_COX2
+Insert size          = 300
+Insert size aut      = yes
+Read Length          = 100
+Type                 = mito
+Genome Range         = 12000-20000
+K-mer                = 39
+Insert Range         = 1.6
+Insert Range strict  = 1.2
+Single/Paired        = PE
+Max memory           =
+Coverage Cut off     = 1000
+Extended log         = 0
+Save assembled reads = no
+Combined reads       = 
+Forward reads        = /work/project/Fvaria/mito/asm/raw/DNAPE2_ACAGTG_L001e6_R1.fastq
+Reverse reads        = /work/project/Fvaria/mito/asm/raw/DNAPE2_ACAGTG_L001e6_R2.fastq
+Seed Input           = /work/project/Fvaria/mito/Bter/ref/Bombus_hypocrita/Bombus_hypocrita_sapporensis_nt/COX2.fasta
+Chloroplast sequence =
+
+
+Project name         = Choose a name for your project, it will be used for the output files.
+Insert size          = Total insert size of your paired end reads, it doesn't have to be accurate but should be close enough.
+Insert size auto     = (yes/no) This will finetune your insert size automatically (Default: yes)
+Read Length          = The read length of your reads.
+Type                 = (chloro/mito/mito_plant) "chloro" for chloroplast assembly, "mito" for mitochondrial assembly and 
+                       "mito_plant" for mitochondrial assembly in plants.
+Genome Range         = (minimum genome size-maximum genome size) The expected genome size range of the genome.
+                       Default value for mito: 12000-20000 / Default value for chloro: 120000-200000
+                       If the expected size is know, you can lower the range, this can be useful when there is a repetitive
+                       region, what could lead to a premature circularization of the genome.
+K-mer                = (integer) This is the length of the overlap between matching reads (Default: 39). 
+                       If reads are shorter then 90 bp or you have low coverage data, this value should be decreased down to 23. 
+                       For reads longer then 101 bp, this value can be increased, but this is not necessary.
+Insert Range         = This variation on the insert size, could lower it when the coverage is very high or raise it when the
+                       coverage is too low (Default: 1.6). 
+Insert Range strict  = Strict variation to resolve repetitive regions (Default: 1.2). 
+Single/Paired        = For the moment only paired end reads are supported.
+Max memory           = You can choose a max memory usage, suitable to automatically subsample the data or when you have limited                      
+                       memory capacity. If you have sufficient memory, leave it blank, else write your available memory in GB
+                       (if you have for example a 8 GB RAM laptop, put down 7 or 7.5 (don't add the unit in the config file))
+Coverage Cut off     = You can speed up the assembly by lowering the coverage cut off, standard it will use up to 1000 coverage
+Extended log         = Prints out a very extensive log, could be useful to send me when there is a problem  (0/1).
+Save assembled reads = All the reads used for the assembly will be stored in seperate files (yes/no)
+Combined reads       = The path to the file that contains the combined reads (forward and reverse in 1 file)
+Forward reads        = The path to the file that contains the forward reads (not necessary when there is a merged file)
+Reverse reads        = The path to the file that contains the reverse reads (not necessary when there is a merged file)
+Seed Input           = The path to the file that contains the seed sequence.
+Chloroplast sequence = The path to the file that contains the chloroplast sequence (Only for mito_plant mode).

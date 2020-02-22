@@ -1,0 +1,54 @@
+
+
+-----------------------------------------------
+NOVOPlasty: The Organelle Assembler
+Version 2.5.9
+Author: Nicolas Dierckxsens, (c) 2015-2016
+-----------------------------------------------
+
+
+Input parameters from the configuration file:   *** Verify if everything is correct ***
+
+Project name         = Fvaria_2PE_k39_COX2
+Insert size          = 300
+Insert size auto     = yes
+Read Length          = 100
+Type                 = mito
+Genome range         = 12000-20000
+K-mer                = 39
+Insert range         = 1.6
+Insert range strict  = 1.2
+Paired/Single        = PE
+Max memory           = 
+Coverage Cut off     = 1000
+Extended log         = 0
+Save assembled reads = no
+Combined reads       = 
+Forward reads        = /work/project/Fvaria/mito/asm/raw/DNAPE2_ACAGTG_L001e6_R1.fastq
+Reverse reads        = /work/project/Fvaria/mito/asm/raw/DNAPE2_ACAGTG_L001e6_R2.fastq
+Seed Input           = /work/project/Fvaria/mito/Bter/ref/Bombus_hypocrita/Bombus_hypocrita_sapporensis_nt/COX2.fasta
+Chloroplast sequence = 
+
+
+Initial read retrieved successfully: TTTCGATTATTAGAAACTGATAATCGATTAATTATTCCATTTAAAATTTCTTTGCGGTTAATTGTTTTATCATTAGATGCTGTTCACTCATGAACAATTCA
+
+-----------------Assembly 1 finished successfully: The genome has been circularized-----------------
+
+Contig 1                  : 15144 bp
+
+Total contigs              : 1
+Largest contig             : 15144 bp
+Smallest contig            : 15144 bp
+Average insert size        : 357 bp
+
+
+-----------------------------------------Input data metrics-----------------------------------------
+
+Total reads                : 503332320
+Aligned reads              : 766630
+Assembled reads            : 40958
+Organelle genome %         : 0.15 %
+Average organelle coverage : 5062
+
+----------------------------------------------------------------------------------------------------
+

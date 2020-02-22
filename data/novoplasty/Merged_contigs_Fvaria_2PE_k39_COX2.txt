@@ -1,0 +1,16 @@
+LINKS BETWEEN CONTIGS
+---------------------
+
+5----> 2124 OR 1124
+2124----> 2124
+1256----> 4
+1124----> 3 OR 2167 OR 3
+2124----> 1124
+START----> 1
+1----> REPETITIVE REGION----> 2
+4----> REPETITIVE REGION----> 5
+3----> 4 OR 1256
+2167----> 4 OR 1256
+
+
+Each option has a separate fasta file
