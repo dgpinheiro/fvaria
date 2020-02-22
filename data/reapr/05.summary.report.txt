@@ -1,0 +1,43 @@
+Stats for original assembly './00.assembly.fa':
+Total length: 15144
+Number of sequences: 1
+Mean sequence length: 15144.00
+Length of longest sequence: 15144
+N50 = 15144, n = 1
+N60 = 15144, n = 1
+N70 = 15144, n = 1
+N80 = 15144, n = 1
+N90 = 15144, n = 1
+N100 = 15144, n = 1
+Number of gaps: 0
+Total gap length: 0
+Error free bases: 57.53% (8712 of 15144 bases)
+
+0 errors:
+FCD errors within a contig: 0
+FCD errors over a gap: 0
+Low fragment coverage within a contig: 0
+Low fragment coverage over a gap: 0
+
+7 warnings:
+Low score regions: 0
+Links: 0
+Soft clip: 1
+Collapsed repeats: 0
+Low read coverage: 0
+Low perfect coverage: 0
+Wrong read orientation: 6
+
+Stats for broken assembly './04.break.broken_assembly.fa':
+Total length: 15144
+Number of sequences: 1
+Mean sequence length: 15144.00
+Length of longest sequence: 15144
+N50 = 15144, n = 1
+N60 = 15144, n = 1
+N70 = 15144, n = 1
+N80 = 15144, n = 1
+N90 = 15144, n = 1
+N100 = 15144, n = 1
+Number of gaps: 0
+Total gap length: 0

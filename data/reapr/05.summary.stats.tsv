@@ -1,0 +1,3 @@
+#id	length	errors	errors_length	perfect_cov	perfect_cov_length	repeat	repeat_length	clip	clip_length	score	score_length	frag_dist	frag_dist_length	frag_dist_gap	frag_dist_gap_length	frag_cov	frag_cov_length	frag_cov_gap	frag_cov_gap_length	read_cov	read_cov_length	link	link_length	read_orientation	read_orientation_length
+Fvar-MT-1.2.fa	15144	7	1376	0	0	0	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	6	1375	
+WHOLE_ASSEMBLY	15144	7	1376	0	0	0	0	1	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	6	1375
