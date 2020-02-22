@@ -245,6 +245,29 @@ Average size of scaffolds: 126,747 bp
 N50: 467,007 (176 contigs)
 </pre>
 
+## Genome statistics
+
+The genome evaluation was made using [QUAST-LG](http://cab.spbu.ru/software/quast-lg/) v. 5.0.2. The estimated genome size of 345 Mbp was used in the NG50 related statistics.
+
+> Fvar-0.1.fa is the same as genome.fa (first assembly with SPADes)
+> Fvar-1.2.fa is the final assembly (using BESST)
+
+| Statistics without reference | Fvar-0.1     | Fvar-1.2     |
+| ---------------------------- | ------------ | ------------ |
+| # contigs (>= 0 bp)          |       9,755  |       2,173  |
+| Largest contig               |     603,324  |   2,258,834  |
+| Total length (>= 100000 bp)  | 116,286,290  | 255,941,895  |
+| N50                          |      83,201  |     470,005  |
+| N75                          |      43,559  |     244,533  |
+| L50                          |         946  |         174  |
+| L75                          |       2,087  |         379  |
+| GC (%)                       |       36.72  |       36.72  |
+| NG50                         |      61,750  |     340,840  |
+| NG75                         |      14,801  |      87,636  |
+| LG50                         |       1,432  |         264  |
+| LG75                         |       4,018  |         723  |
+
+The full report is available in [HTML](https://github.com/dgpinheiro/fvaria/tree/master/data/quast/report.html) or [TXT](https://github.com/dgpinheiro/fvaria/tree/master/data/quast/report.txt).
 
 ## Gene prediction
 
