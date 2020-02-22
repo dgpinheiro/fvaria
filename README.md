@@ -476,7 +476,7 @@ Furthermore, we made a comparison of the *F. varia* assembled genome with *Apis 
 *Melipona* mitochondrial genomes using the software [MAUVE](http://darlinglab.org/mauve/mauve.html) v. 2.4.0
 for constructing multiple genome alignment. From this alignment we defined six genome blocks in the assembled
 genome according to rearrangements observed in the mitochondrial gene order compared to other high eusocial bee species.
-So, we used an in-house script () to support the alignments of fragments across the blocks' junctions, i.e. if the 
+So, we used an in-house script ([mappings_checker_on_blocks.pl](https://github.com/dgpinheiro/fvaria/blob/master/mappings_checker_on_blocks.pl)) to support the alignments of fragments across the blocks' junctions, i.e. if the 
  two reads of each pair aligned one in each adjacent block, thus supporting the adjacency.
 
 ### Mitochondrial genome annotation
