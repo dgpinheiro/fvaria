@@ -45,7 +45,7 @@ cat ./raw/*_R2_*.fastq > FVARIA_R2.fq
 ./run_jellyfish.sh
 ```
 
-> Jellyfish was executed using a range of k-mer sizes, from 19 to 63 with an increment of 4. The Jellyfish histogram of k-mer counts was also created with [run_jellyfish.sh]().
+> Jellyfish was executed using a range of k-mer sizes, from 19 to 63 with an increment of 4. The Jellyfish histogram of k-mer counts was also created with [run_jellyfish.sh](https://github.com/dgpinheiro/fvaria/blob/master/run_jellyfish.sh).
 
 Execution of GenomeScope for all Jellyfish histogram files:
 
@@ -115,34 +115,54 @@ Output (Min./Max.):
 Read Error Rate 0.12025125 %    0.12025125 %
 </pre>
 
-## Evaluation of contamination
+## Evaluation of sample contamination (reads)
 
-The evaluation of contamination was performed on all fastq reads using [Kraken2](https://ccb.jhu.edu/software/kraken2/index.shtml) software v. 2.0.7-beta with a custom database, with includes not only the default databases with RefSeq complete genomes (bacteria, plasmid, viral, human, fungi, plant and protozoa species), but also other not completed genomes of bacteria, fungi and protozoa species.
+The evaluation of contamination was performed on all fastq reads using [Kraken2](https://ccb.jhu.edu/software/kraken2/index.shtml) software v. 2.0.7-beta with a custom database, with includes not only the default databases with RefSeq complete genomes (bacteria, plasmid, viral, human, fungi, plant and protozoa species), but also other not completed genomes of bacteria, fungi and protozoa species, in addition to the sequences of NCBI nucleotides (nt) database.
 
 ```bash=
-kraken2 --db /usr/local/bioinfo/kraken2/DB --threads 50 --minimum-base-quality 30 --memory-mapping --paired --report kraken2_report.txt --output kraken2_output.txt FVARIA_R1.fq FVARIA_R2.fq
+kraken2 --db /usr/local/bioinfo/kraken2/DB --confidence 0.51 --threads 50 --minimum-base-quality 30 --memory-mapping --paired --report kraken2_51_report.txt --output kraken2_51_output.txt FVARIA_R1.fq FVARIA_R2.fq
 ```
 
 Output:
 <pre>
 Loading database information... done.
-337321230 sequences (68138.89 Mbp) processed in 35970.352s (562.7 Kseq/m, 113.66 Mbp/m).
-  127090355 sequences classified (37.68%)
-  210230875 sequences unclassified (62.32%)
+337321230 sequences (68138.89 Mbp) processed in 543.791s (37218.8 Kseq/m, 7518.21 Mbp/m).
+  3411421 sequences classified (1.01%)
+  333909809 sequences unclassified (98.99%)
 </pre>
 
+```bash=
+perl -F"\t" -lane ' next if ($F[3] !~ /^(?:R|U\d*|D|K)$/); print join("\t", $F[0],$F[3],$F[5]);' kraken2_51_report.txt
+```
+Output:
+<pre>
+ 98.99  U       unclassified
+  1.01  R       root
+  0.41  D           Eukaryota
+  0.11  K               Metazoa
+  0.00  K               Fungi
+  0.00  K             Viridiplantae
+  0.00  D           Bacteria
+  0.00  D         Viruses
+</pre>
 
+> The current Kraken2 database doesn't have genomes of Insecta class.
 
 ## Pre-processing steps
 
 The software [Fastqc](http://www.bioinformatics.babraham.ac.uk/projects/fastqc/) was used to perform the data quality control.
-Then the paired-end reads were analyzed with software [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic)
-to identification of adapter sequences and quality filtering.
+Then the paired-end reads were analyzed with software [Trimmomatic](http://www.usadellab.org/cms/?page=trimmomatic) v. 0.35
+for dentification of adapter sequences and quality filtering. The following steps were executed with Trimmomatic:
+* Remove adapters (ILLUMINACLIP:TruSeq3-PE.fa:2:30:10)
+* Remove leading low quality or N bases (below quality 3) (LEADING:3)
+* Remove trailing low quality or N bases (below quality 3) (TRAILING:3)
+* Scan the read with a 4-base wide sliding window, cutting when the average quality per base drops below 15 (SLIDINGWINDOW:4:15)
+* Drop reads below the 100 bases long (MINLEN:100)
 
-The mate-pair reads were analyzed using [NxTrim](https://github.com/sequencing/NxTrim) to
+The mate-pair reads were analyzed using [NxTrim](https://github.com/sequencing/NxTrim) v. 0.4.1 to
  to discard low quality reads and categorise reads according to the orientation implied by the adapter location
 . Thus, it exploits the particular properties of Illumina Nextera Mate Pair data and evaluates the read on both sides          
-of the adapter sites.
+of the adapter sites. The NxTrim was executed with a more aggressive adapter search (*--aggressive* parameter).
 The NxTrim builds 'virtual libraries' of mate pairs, paired-end reads and single-ended reads. NxTrim
 also trims off adapter read‐through.
 
@@ -306,6 +326,32 @@ emapper.py --annotate_hits_table em/input_file.emapper.seed_orthologs --no_file_
 
 ```
 
+## Evaluation of sample contamination (genome assembly)
+
+The evaluation of contamination was performed on assembled genome using [Kraken2](https://ccb.jhu.edu/software/kraken2/index.shtml) software v. 2.0.7-beta with a custom database, with includes not only the default databases with RefSeq complete genomes (bacteria, plasmid, viral, human, fungi, plant and protozoa species), but also other not completed genomes of bacteria, fungi and protozoa species, in addition to the sequences of NCBI nucleotides (nt) database.
+
+```bash=
+kraken2 --db /usr/local/bioinfo/kraken2/DB --confidence 0.51 --threads 50 --minimum-base-quality 30 --memory-mapping --report kraken2_51_report.txt --output kraken2_60_output.txt Fvar-1.2.fa
+```
+
+Output:
+<pre>
+Loading database information... done.
+2173 sequences (275.42 Mbp) processed in 17.291s (7.5 Kseq/m, 955.69 Mbp/m).
+  0 sequences classified (0.00%)
+  2173 sequences unclassified (100.00%)
+</pre>
+
+```bash=
+perl -F"\t" -lane ' next if ($F[3] !~ /^(?:R|U\d*|D|K)$/); print join("\t", $F[0],$F[3],$F[5]);' kraken2_51_report.txt
+```
+Output:
+<pre>
+100.00  U       unclassified
+</pre>
+
+> The current Kraken2 database doesn't have genomes of Insecta class.
+
 ## UCSC Genome Browser
 
 We load *F. varia* genome and gene prediction coordinates to our UCSC Genome Browser instalation at [LBDA](http://kerr.fmrp.usp.br:88/). The *F. varia* genome can be accessed [here](http://kerr.fmrp.usp.br:88/cgi-bin/hgGateway?hgsid=5040&clade=insect&org=F.+varia&db=0).
@@ -313,6 +359,136 @@ We load *F. varia* genome and gene prediction coordinates to our UCSC Genome Bro
 ## Assembly of Mitochondrial Genome
 
 
+### Choose of the best approach to assembly
+
+We tried four approaches for mitochondrial assembly evaluation:
+* [NOVOPlasty](https://github.com/ndierckx/NOVOPlasty) v. 2.5.9 (COX2 gene of *Bombus hypocrita sapporensis* as seed input sequence) - default parameters and all processed reads;
+* [MITObim](https://github.com/chrishah/MITObim) v. 1.9 (COX2 gene of *Bombus hypocrita sapporensis* as seed input sequence) - default parametersand only the processed reads mapped against mitochondrial bee mitochondrial genomes;
+* [SPAdes](http://cab.spbu.ru/software/spades/) v. 3.6.2 (default parameters and only the processed reads mapped against mitochondrial bee mitochondrial genomes);
+* [Platanus](http://platanus.bio.titech.ac.jp/) v. 1.2.4 (default parameters and only the processed reads mapped against mitochondrial bee mitochondrial genomes);
+The approach with NOVOPlasty was selected because it was the only resulting in one contig with evidence of circularization.
+
+### Assembly
+
+The organelle-specific software [NOVOPlasty](https://github.com/ndierckx/NOVOPlasty) v. 2.5.9 was used 
+for mitochondrial assembly with default parameters considering COX2 gene of *Bombus hypocrita sapporensis*. 
+(NC_011923) as seed input sequence. All the paired-end reads were used as input for the NOVOPlasty procedures
+ as recommended by its developers.
+
+```bash=
+
+```
+
+The final alignment file is [Fvar-MT-1.2.fa](https://github.com/dgpinheiro/fvaria/blob/master/data/Fvar-MT-1.2.fa.gz).
+
+### Mitochondrial assembly evaluation
+
+#### Read quality control and trimming
+
+In order to validate the assembly, we selected only the high quality paired-end reads. So, we process these reads using the [PrinSeq](http://prinseq.sourceforge.net/) v. 0.20.3 under more stringent threshold parameters: trimming reads using the sliding window approach, considering the mean of quality score below 28 in a window size of 3 bp sliding 1 bp to the left, in addition to filtering sequences with at least one quality score below 30.
+ 
+```bash=
+prinseq-lite.pl -fastq ./raw/DNAPE1_CAGATC_L006_R1.fastq \
+		-fastq2 ./raw/DNAPE1_CAGATC_L006_R1.fastq \
+		-out_format 3 \
+		-out_good ./processed/prinseq/mitogenome/DNAPE1_CAGATC_L006.prinseq \
+		-min_qual_score 30 \
+		-out_bad null \
+		-qual_noscale \
+		-no_qual_header \
+		-min_len 20 \
+		-ns_max_p 80 \
+		-noniupac \
+		-trim_qual_right 25 \
+		-trim_qual_type mean \
+		-trim_qual_rule lt \
+		-trim_qual_window 3 \
+		-trim_qual_step 1
+
+prinseq-lite.pl -fastq ./raw/DNAPE2_ACAGTG_L001_R1.fastq \
+		-fastq2 ./raw/DNAPE2_ACAGTG_L001_R2.fastq \
+		-out_format 3 \
+		-out_good ./processed/prinseq/mitogenome/DNAPE2_ACAGTG_L001.prinseq \
+		-min_qual_score 30 \
+		-out_bad null \
+		-qual_noscale \
+		-no_qual_header \
+		-min_len 20 \
+		-ns_max_p 80 \
+		-noniupac \
+		-trim_qual_right 25 \
+		-trim_qual_type mean \
+		-trim_qual_rule lt \
+		-trim_qual_window 3 \
+		-trim_qual_step 1
+```
+
+#### Accuracy evaluation
+
+This process resulted in 74,938,483 paired-end reads that were aligned against the assembled mitochondrial genome
+using [bowtie](http://bowtie-bio.sourceforge.net/index.shtml) v. 0.12.7 to immediately evaluate the mapping coverage. Then, we used the 
+[REAPR](https://www.sanger.ac.uk/science/tools/reapr) v. 1.0.18 to evaluate the genome assembly accuracy with the previous
+mapping.
+
+The alignment with bowtie was configured to reported only end-to-end hits with up to 1 mismatch, and with a maximum insert size of 300 for 
+paired-end alignment.
+
+```bash=
+cat ./processed/prinseq/mitogenome/DNAPE*_1.fastq > ./processed/prinseq/mitogenome/DNAPE.prinseq_1.fastq
+cat ./processed/prinseq/mitogenome/DNAPE*_1.fastq > ./processed/prinseq/mitogenome/DNAPE.prinseq_2.fastq
+
+bowtie-build ./Fvar-MT-1.2.fa Fvar-MT-1.2
+
+bowtie -v 1 -p 8 -X 300 -a --fr ./Fvar-MT-1.2.fa \
+        -1 ./processed/prinseq/mitogenome/DNAPE.prinseq_1.fastq \
+        -2 ./processed/prinseq/mitogenome/DNAPE.prinseq_2.fastq \
+        -S ./bowtiexPEreads_Fvar-MT-1.2.sam
+
+samtools view -Sb ./bowtiexPEreads_Fvar-MT-1.2.sam > ./bowtiexPEreads_Fvar-MT-1.2.bam
+
+reapr facheck ./Fvar-MT-1.2.fa
+reapr preprocess ./Fvar-MT-1.2.fa ./bowtiexPEreads_Fvar-MT-1.2.bam ./reapr_out
+
+cd ./reapr_out
+
+reapr stats ./ 01.stats
+
+reapr fcdrate ./ 01.stats 02.fcdrate
+
+fcdcutoff=`tail -n 1 ./02.fcdrate.info.txt | cut -f 1`
+
+reapr score 00.assembly.fa.gaps.gz 00.in.bam 01.stats ${fcdcutoff} 03.score
+
+reapr break 00.assembly.fa 03.score.errors.gff.gz 04.break
+
+reapr summary 00.assembly.fa 03.score 04.break 05.summary
+```
+
+According to the REAPR results, there are 57.53% of error free bases in the assembled 
+mitochondrial genome of 15,144 bp and no other errors were identified, such as the REAPR 
+fragment coverage distribution (FCD) error, or even an evidence of local misassemblies.
+
+The [summary report](https://github.com/dgpinheiro/fvaria/blob/master/data/reapr/05.summary.report.txt) of REAPR analysis has more details about the assembly evaluation.
+
+#### Genome comparison
+
+Furthermore, we made a comparison of the *F. varia* assembled genome with *Apis mellifera*, *Bombus* and 
+*Melipona* mitochondrial genomes using the software [MAUVE](http://darlinglab.org/mauve/mauve.html) v. 2.4.0
+for constructing multiple genome alignment. From this alignment we defined six genome blocks in the assembled
+genome according to rearrangements observed in the mitochondrial gene order compared to other high eusocial bee species.
+So, we used an in-house script () to support the alignments of fragments across the blocks' junctions, i.e. if the 
+ two reads of each pair aligned one in each adjacent block, thus supporting the adjacency.
+
+### Mitochondrial genome annotation
+
+The genome annotation was initially done using the software [MITOS2](http://mitos2.bioinf.uni-leipzig.de/index.py) and
+later it was done manually to correctly detect the start and stop codons using [ORFfinder](https://www.ncbi.nlm.nih.gov/orffinder/) 
+and [BLAST](https://blast.ncbi.nlm.nih.gov/Blast.cgi) tools, which were also used to identify rRNAs' coordinates. 
+The tRNAs were identified by the softwares [tRNAscan-SE](http://lowelab.ucsc.edu/tRNAscan-SE/) v. 2.0 and 
+[ARWEN](http://mbio-serv2.mbioekol.lu.se/ARWEN/) using default parameters. 
+The genome nucleotide composition was calculated using [Geneious](https://www.geneious.com/) R11, and the genes mapping and its organization in the genome was generated by [OGDRAW](https://chlorobox.mpimp-golm.mpg.de/OGDraw.html) v. 1.3.1 from the GenBank flat file.
+
+We also generated a [TBL file](https://github.com/dgpinheiro/fvaria/blob/master/data/Fvar-MT-1.2.1.tbl.gz) to represent the genes mapping and its organization in the genome.
 
 ## NCBI Genome Database Submission
 
