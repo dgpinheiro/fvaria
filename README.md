@@ -502,6 +502,12 @@ genome according to rearrangements observed in the mitochondrial gene order comp
 So, we used an in-house script ([mappings_checker_on_blocks.pl](https://github.com/dgpinheiro/fvaria/blob/master/mappings_checker_on_blocks.pl)) to support the alignments of fragments across the blocks' junctions, i.e. if the 
  two reads of each pair aligned one in each adjacent block, thus supporting the adjacency.
 
+```bash=
+mappings_checker_on_blocks.pl -b fvaria_mauve_blocks.bed -a ./bowtiexPEreads_Fvar-MT-1.2.bam > output_adjacency.txt
+```
+
+The blocks' coordinates are in a bed file ([fvaria_mauve_blocks.bed](https://github.com/dgpinheiro/fvaria/blob/master/data/fvaria_mauve_blocks.bed)). And the output of this evaluation is also available ([mappings_checker_on_blocks.pl](https://github.com/dgpinheiro/fvaria/blob/master/data/output_adjacency.txt)). The number of mapped paired-end reads (R1 and R2) accross the blocks' junctions support the current assembly and blocks organization.
+
 ### Mitochondrial genome annotation
 
 The genome annotation was initially done using the software [MITOS2](http://mitos2.bioinf.uni-leipzig.de/index.py) and
